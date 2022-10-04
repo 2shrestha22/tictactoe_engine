@@ -1,8 +1,6 @@
-/// Support for doing something awesome.
-///
-/// More dartdocs go here.
+/// Provides board for tictactoe which will automatically check for wins and
+/// draw.
 library tictactoe_board;
 
 export 'src/board.dart';
-
-// TODO: Export any libraries intended for clients of this package.
+export 'src/mark.dart';
