@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'mark.dart';
+part '_win_checker.dart';
 
 typedef Combo = List<Box>;
 
@@ -37,23 +38,20 @@ class Box extends Equatable {
 class Board {
   /// Board of size [mxn].
   ///
-  /// [m] is number of rows and [n] is number of columns.
+  /// [n] is number of rows and columns - nxn.
   ///
   /// [value] is null when game is not finished. If combo is empty then game is
   /// draw. If [value] is non empty list then game is won.
-  Board(this.m, this.n, this.winComboLength) {
+  Board(this.n, this.winComboLength) {
     _initializeElements();
   }
 
   /// Sets elements to empty boxes.
   void _initializeElements() {
-    _elements = List<Box>.generate(m * n, (index) {
+    _elements = List<Box>.generate(n * n, (index) {
       return Box(mark: null, i: index ~/ n, j: index % n);
     });
   }
-
-  /// Number of rows.
-  final int m;
 
   /// Number of columns
   final int n;
@@ -102,7 +100,7 @@ class Board {
   @override
   String toString() {
     String string = '';
-    for (var i = 0; i < m; i++) {
+    for (var i = 0; i < n; i++) {
       for (var j = 0; j < n; j++) {
         string = '$string${elements[i * n + j].mark} ';
       }
@@ -119,47 +117,4 @@ class Board {
   }
 
   void Function(Combo combo)? _onFinishedCallback;
-}
-
-/// Returns winCombo in null no win if empty then it is draw.
-Combo? _checkWin(int i, int j, Board board) {
-  final mark = board.get(i, j);
-  if (mark == null) return null;
-
-  List<Box> combo = [];
-
-  // check i th row for combo
-  for (var n = 0; n < board.n; n++) {
-    // itterate through all the elements in the column
-    if (board.get(i, n) == mark) {
-      combo.add(Box(mark: mark, i: i, j: n));
-    } else if (combo.length >= board.winComboLength) {
-      break;
-    } else {
-      combo.clear();
-    }
-  }
-  if (combo.length >= board.winComboLength) {
-    return combo;
-  } else {
-    combo.clear();
-  }
-
-  // check j th column for combo
-  for (var m = 0; m < board.m; m++) {
-    // itterate through all the elements in the column
-    if (board.get(m, j) == mark) {
-      combo.add(Box(mark: mark, i: m, j: j));
-    } else if (combo.length >= board.winComboLength) {
-      break;
-    } else {
-      combo.clear();
-    }
-  }
-  if (combo.length >= board.winComboLength) {
-    return combo;
-  } else {
-    combo.clear();
-  }
-  return null;
 }
