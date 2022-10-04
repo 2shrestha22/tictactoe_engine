@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:equatable/equatable.dart';
 import 'mark.dart';
 
@@ -44,6 +42,11 @@ class Board {
   /// [value] is null when game is not finished. If combo is empty then game is
   /// draw. If [value] is non empty list then game is won.
   Board(this.m, this.n, this.winComboLength) {
+    _initializeElements();
+  }
+
+  /// Sets elements to empty boxes.
+  void _initializeElements() {
     _elements = List<Box>.generate(m * n, (index) {
       return Box(mark: null, i: index ~/ n, j: index % n);
     });
@@ -61,6 +64,8 @@ class Board {
 
   List<Box> get elements => _elements;
 
+  bool _completed = false;
+
   /// Get mark from ij th element.
   ///
   /// If j is null then i should be index in one dimensional array.
@@ -71,13 +76,27 @@ class Board {
   /// Return List<Box> if game is finished else null.
   ///
   /// Will return empty list if game is over.
+  ///
+  /// Will throw [Exception] when game is already completed.
   Combo? set(Mark mark, int i, int j) {
+    if (_completed) throw Exception('GAME_ALREADY_COMPLETED');
+
     _elements[i * n + j] = Box(mark: mark, i: i, j: j);
 
     final combo = _checkWin(i, j, this);
 
-    // notify listener when game is finished
+    // invoke onFinished when game is finished i.e combo is not null
+    if (combo != null) {
+      _onFinishedCallback?.call(combo);
+      _completed = true;
+    }
     return combo;
+  }
+
+  /// Reset the board with initial state.
+  void clear() {
+    _completed = false;
+    _initializeElements();
   }
 
   @override
@@ -91,6 +110,15 @@ class Board {
     }
     return string;
   }
+
+  /// Will be called when game is completed.
+  ///
+  /// After game is completed user can clear the board.
+  void onComplete(void Function(Combo combo) callback) {
+    _onFinishedCallback = callback;
+  }
+
+  void Function(Combo combo)? _onFinishedCallback;
 }
 
 /// Returns winCombo in null no win if empty then it is draw.
