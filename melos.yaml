@@ -1,0 +1,5 @@
+name: tictactoe_engine
+
+packages:
+  - packages/**
+    
