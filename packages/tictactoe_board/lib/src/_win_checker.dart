@@ -45,8 +45,10 @@ Combo? _checkWin(int x, int y, Board board) {
   // diagonal is not sufficient. Sometimes super diagonals also needed to be
   // checked.
 
-  // TODO: this if condition is not working
-  if (x + y >= board.winComboLength - 1 && x + y <= board.winComboLength + 1) {
+  // if sum is between (n -1) +/- (n-c) it is in diagonal (/)
+  // sum = x+y. c = combo length
+  if (x + y >= board.winComboLength - 1 &&
+      x + y <= 2 * board.n - board.winComboLength - 1) {
     // check for diagonals
 
     // diagonal starts from (p,q) to (q,p)
