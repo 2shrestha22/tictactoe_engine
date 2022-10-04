@@ -11,28 +11,26 @@ class Box extends Equatable {
   ///
   /// j is column of this box in the board.
 
-  Box({required this.mark, required this.i, required this.j});
+  Box({required this.mark, required this.x, required this.y});
 
   final Mark? mark;
 
   /// Row of this box in the board.
-  final int i;
+  final int x;
 
   /// Column of this box in the board.
-  final int j;
+  final int y;
 
   /// Map index to one dimensional array (list)
   ///
-  /// index of [ij] element of matrix of size [mn].
-  ///
-  /// [m] number of rows [columns] number of column
-  int index(int columns) => i * columns + j;
+  /// index of [xy] element of matrix of size [nxn].
+  int index(int columns) => x * columns + y;
 
   @override
-  String toString() => '[$i,$j - $mark]';
+  String toString() => '[$x,$y - $mark]';
 
   @override
-  List<Object?> get props => [mark, i, j];
+  List<Object?> get props => [mark, x, y];
 }
 
 class Board {
@@ -49,7 +47,7 @@ class Board {
   /// Sets elements to empty boxes.
   void _initializeElements() {
     _elements = List<Box>.generate(n * n, (index) {
-      return Box(mark: null, i: index ~/ n, j: index % n);
+      return Box(mark: null, x: index ~/ n, y: index % n);
     });
   }
 
@@ -67,7 +65,7 @@ class Board {
   /// Get mark from ij th element.
   ///
   /// If j is null then i should be index in one dimensional array.
-  Mark? get(int i, int j) => _elements[i * n + j].mark;
+  Mark? get(int x, int y) => _elements[x * n + y].mark;
 
   /// Set mark on ij th element.
   ///
@@ -76,12 +74,12 @@ class Board {
   /// Will return empty list if game is over.
   ///
   /// Will throw [Exception] when game is already completed.
-  Combo? set(Mark mark, int i, int j) {
+  Combo? set(Mark mark, int x, int y) {
     if (_completed) throw Exception('GAME_ALREADY_COMPLETED');
 
-    _elements[i * n + j] = Box(mark: mark, i: i, j: j);
+    _elements[x * n + y] = Box(mark: mark, x: x, y: y);
 
-    final combo = _checkWin(i, j, this);
+    final combo = _checkWin(x, y, this);
 
     // invoke onFinished when game is finished i.e combo is not null
     if (combo != null) {
