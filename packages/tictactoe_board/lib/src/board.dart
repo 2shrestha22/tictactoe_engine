@@ -75,6 +75,7 @@ class Board {
   ///
   /// Will throw [Exception] when game is already completed.
   Combo? set(Mark mark, int x, int y) {
+    if (get(x, y) != null) throw Exception('BOX_ALREADY_FILLED');
     if (_completed) throw Exception('GAME_ALREADY_COMPLETED');
 
     _elements[x * n + y] = Box(mark: mark, x: x, y: y);

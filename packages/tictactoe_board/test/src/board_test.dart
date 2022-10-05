@@ -7,7 +7,7 @@ void main() {
 
   setUp(() {
     combo = null;
-    board = Board(3, 3);
+    board = Board(4, 3);
     board.onComplete((Combo value) {
       combo = value;
     });
@@ -47,7 +47,7 @@ void main() {
   );
 
   test(
-    'Check diagonals for winCombo - /',
+    'Check anti diagonals for winCombo - /',
     () async {
       board.set(Mark.zero, 0, 2);
       board.set(Mark.cross, 1, 2);
@@ -57,10 +57,30 @@ void main() {
 
       expect(
         combo,
-        equals([
+        unorderedEquals([
           Box(mark: Mark.zero, x: 2, y: 0),
           Box(mark: Mark.zero, x: 1, y: 1),
           Box(mark: Mark.zero, x: 0, y: 2),
+        ]),
+      );
+    },
+  );
+
+  test(
+    'Check diagonals for winCombo',
+    () async {
+      board.set(Mark.zero, 1, 0);
+      board.set(Mark.cross, 1, 2);
+      board.set(Mark.zero, 3, 2);
+      board.set(Mark.cross, 2, 2);
+      board.set(Mark.zero, 2, 1);
+
+      expect(
+        combo,
+        unorderedEquals([
+          Box(mark: Mark.zero, x: 1, y: 0),
+          Box(mark: Mark.zero, x: 2, y: 1),
+          Box(mark: Mark.zero, x: 3, y: 2),
         ]),
       );
     },
