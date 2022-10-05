@@ -2,4 +2,17 @@ name: tictactoe_engine
 
 packages:
   - packages/**
-    
+
+scripts:
+  test:
+    name: test
+    description: 'Run test'
+    exec: dart test
+  analyze:
+    name: analyze
+    description: 'Run dart analysis'
+    exec: dart analyze
+  get:
+    name: get
+    description: 'Run dart pub get'
+    exec: dart pub get
