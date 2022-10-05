@@ -47,6 +47,7 @@ class Board {
   /// Sets elements to empty boxes.
   void _initializeElements() {
     _moves = 0;
+    _lastMove = null;
     _elements = List<Box>.generate(n * n, (index) {
       return Box(mark: null, x: index ~/ n, y: index % n);
     });
@@ -59,7 +60,12 @@ class Board {
 
   late List<Box> _elements;
 
-  List<Box> get elements => _elements;
+  late Box? _lastMove;
+
+  /// LastMove is null if board is clear.
+  Box? get lastMove => _lastMove;
+
+  List<Box> get elements => List.unmodifiable(_elements);
 
   bool _completed = false;
 
@@ -85,7 +91,9 @@ class Board {
     if (get(x, y) != null) throw Exception('BOX_ALREADY_FILLED');
     if (_completed) throw Exception('GAME_ALREADY_COMPLETED');
 
-    _elements[x * n + y] = Box(mark: mark, x: x, y: y);
+    final box = Box(mark: mark, x: x, y: y);
+    _lastMove = box;
+    _elements[x * n + y] = box;
 
     final combo = _checkWin(x: x, y: y, board: this, moves: ++_moves);
 
@@ -100,6 +108,7 @@ class Board {
   /// Reset the board with initial state.
   void clear() {
     _completed = false;
+    _lastMove = null;
     _initializeElements();
   }
 
@@ -123,4 +132,13 @@ class Board {
   }
 
   void Function(Combo combo)? _onFinishedCallback;
+
+  Combo? checkWin() => _lastMove != null
+      ? _checkWin(
+          x: _lastMove!.x,
+          y: _lastMove!.y,
+          board: this,
+          moves: _moves,
+        )
+      : null;
 }
