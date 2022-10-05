@@ -2,9 +2,15 @@ import 'dart:math';
 
 import 'package:tictactoe_board/tictactoe_board.dart';
 
+class Eval {
+  Eval(this.box, this.value);
+
+  final Box box;
+  final int value;
+}
+
 class Ai {
-  /// Return max possible value from the board.
-  int minimax({
+  Box getBestMove({
     /// Current state of board.
     required Board board,
 
@@ -12,6 +18,22 @@ class Ai {
     /// let say AI (O) is always minimizing player. and human (X) is always
     /// maximizing player.
     required Mark player,
+    required bool isMaximizing,
+  }) {
+    return minimax(board: board, player: player, isMaximizing: isMaximizing)
+        .box;
+  }
+
+  /// Return max possible value from the board.
+  Eval minimax({
+    /// Current state of board.
+    required Board board,
+
+    /// Whose move is it?
+    /// let say AI (O) is always minimizing player. and human (X) is always
+    /// maximizing player.
+    required Mark player,
+    required bool isMaximizing,
   }) {
     // it still have moves
     // final combo = board.checkWin(x, y);
@@ -25,40 +47,40 @@ class Ai {
         /// game is completed
         if (winCombo.first.mark == Mark.cross) {
           // if maximizing player wins
-          return 10;
+          return Eval(board.lastMove!, 10);
         } else {
           // if minimizing player wins
-          return -10;
+          return Eval(board.lastMove!, -10);
         }
       } else {
         // game is over and noone won.
-        return 0;
+        return Eval(board.lastMove!, 0);
       }
     }
 
-    if (player == Mark.cross) {
-      // Cross is maximizing player
-
-      int maxEval = -1000;
+    if (isMaximizing) {
+      var maxEval = Eval(board.lastMove!, -1000);
       for (var e in availableMoves) {
         final newBoard = board;
         final eval = minimax(
           board: newBoard..set(player, e.x, e.y),
           player: player.complement,
+          isMaximizing: !isMaximizing,
         );
-        maxEval = max(eval, maxEval);
+        maxEval = Eval(e, max(eval.value, maxEval.value));
       }
       return maxEval;
     } else {
-      // Zero is minimizing player
-      int minEval = 1000;
+      var minEval = Eval(board.lastMove!, 1000);
+
       for (var e in availableMoves) {
         final newBoard = board;
         final eval = minimax(
           board: newBoard..set(player, e.x, e.y),
           player: player.complement,
+          isMaximizing: !isMaximizing,
         );
-        minEval = min(eval, minEval);
+        minEval = Eval(e, min(eval.value, minEval.value));
       }
       return minEval;
     }

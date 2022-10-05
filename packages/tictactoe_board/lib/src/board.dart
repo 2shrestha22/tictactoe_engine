@@ -141,4 +141,8 @@ class Board {
           moves: _moves,
         )
       : null;
+
+  /// Get available moves. Boxes with Mark null.
+  // List<Box> get availableMoves =>
+  //     elements.where((e) => e.mark == null).toList();
 }
