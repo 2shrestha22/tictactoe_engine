@@ -1,7 +1,12 @@
 part of 'board.dart';
 
 /// Returns winCombo in null no win if empty then it is draw.
-Combo? _checkWin(int x, int y, Board board) {
+Combo? _checkWin({
+  required int x,
+  required int y,
+  required Board board,
+  required int moves,
+}) {
   final mark = board.get(x, y);
   if (mark == null) return null;
 
@@ -106,6 +111,8 @@ Combo? _checkWin(int x, int y, Board board) {
       combo.clear();
     }
   }
+
+  if (moves >= board.elements.length) return [];
 
   return null;
 }

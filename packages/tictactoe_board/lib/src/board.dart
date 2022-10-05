@@ -46,12 +46,13 @@ class Board {
 
   /// Sets elements to empty boxes.
   void _initializeElements() {
+    _moves = 0;
     _elements = List<Box>.generate(n * n, (index) {
       return Box(mark: null, x: index ~/ n, y: index % n);
     });
   }
 
-  /// Number of columns
+  /// Size of board nxn
   final int n;
 
   final int winComboLength;
@@ -61,6 +62,11 @@ class Board {
   List<Box> get elements => _elements;
 
   bool _completed = false;
+
+  /// no of moves made.
+  ///
+  /// keeping trac of moves so that we don't need to itterate through elements.
+  late int _moves;
 
   /// Get mark from ij th element.
   ///
@@ -75,12 +81,13 @@ class Board {
   ///
   /// Will throw [Exception] when game is already completed.
   Combo? set(Mark mark, int x, int y) {
+    if (!(x < n && y < n)) throw Exception('NOT_IN_RANGE');
     if (get(x, y) != null) throw Exception('BOX_ALREADY_FILLED');
     if (_completed) throw Exception('GAME_ALREADY_COMPLETED');
 
     _elements[x * n + y] = Box(mark: mark, x: x, y: y);
 
-    final combo = _checkWin(x, y, this);
+    final combo = _checkWin(x: x, y: y, board: this, moves: ++_moves);
 
     // invoke onFinished when game is finished i.e combo is not null
     if (combo != null) {
